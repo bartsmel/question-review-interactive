@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Board Question Review Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #f9f6f0;
+    --warm-white: #fffdf9;
+    --ink: #1c1814;
+    --ink-mid: #4a3f35;
+    --ink-light: #8a7d74;
+    --border: #ddd5ca;
+    --accent: #c0471e;
+    --accent-light: #f5e0d8;
+    --gold: #a07800;
+    --gold-light: #f7edcc;
+    --green: #2a7a50;
+    --green-light: #d4ede1;
+    --teal: #1b6b5f;
+    --teal-light: #cde8e3;
+    --blue: #1d4e8a;
+    --blue-light: #d5e4f5;
+    --shadow: 0 2px 16px rgba(28,24,20,0.10);
+    --shadow-lg: 0 8px 40px rgba(28,24,20,0.14);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .site-header {
+    background: var(--ink);
+    padding: 1.6rem 2rem 1.4rem;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .site-header h1 {
+    font-family: 'Lora', serif;
+    font-size: clamp(1.25rem, 3vw, 1.75rem);
+    color: var(--cream);
+    font-weight: 700;
+    line-height: 1.2;
+  }
+  .site-header p {
+    font-size: 0.78rem;
+    color: #9a8e84;
+    margin-top: 0.25rem;
+  }
+  .back-btn {
+    font-size: 0.78rem;
+    color: #9a8e84;
+    background: none;
+    border: 1px solid #3a3430;
+    border-radius: 999px;
+    padding: 0.4rem 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+    font-family: 'DM Sans', sans-serif;
+    display: none;
+  }
+  .back-btn:hover { border-color: var(--cream); color: var(--cream); }
+  .back-btn.visible { display: block; }
+
+  /* ── PROGRESS BAR ── */
+  .progress-bar {
+    height: 3px;
+    background: #2e2824;
+    position: relative;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    width: 0%;
+  }
+
+  /* ── BREADCRUMB ── */
+  .breadcrumb {
+    padding: 0.7rem 2rem;
+    font-size: 0.73rem;
+    color: var(--ink-light);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 2.4rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--warm-white);
+    flex-wrap: wrap;
+  }
+  .breadcrumb span { display: flex; align-items: center; gap: 0.4rem; }
+  .breadcrumb .crumb { color: var(--ink-mid); font-weight: 500; }
+  .breadcrumb .sep { color: var(--border); }
+
+  /* ── MAIN CONTAINER ── */
+  .container {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 5rem;
+  }
+
+  /* ── SCREENS ── */
+  .screen { display: none; }
+  .screen.active {
+    display: block;
+    animation: slideIn 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── TRIAGE SCREEN ── */
+  .triage-intro {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+  .triage-intro .eyebrow {
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-light);
+    margin-bottom: 0.75rem;
+    font-weight: 500;
+  }
+  .triage-intro h2 {
+    font-family: 'Lora', serif;
+    font-size: clamp(1.5rem, 3.5vw, 2.2rem);
+    font-weight: 700;
+    line-height: 1.25;
+    margin-bottom: 0.75rem;
+  }
+  .triage-intro p {
+    color: var(--ink-mid);
+    font-size: 0.97rem;
+    line-height: 1.65;
+    max-width: 520px;
+    margin: 0 auto;
+  }
+
+  .triage-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+  .triage-card {
+    background: var(--warm-white);
+    border: 2px solid var(--border);
+    border-radius: 16px;
+    padding: 1.75rem 1.25rem 1.5rem;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+  }
+  .triage-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .triage-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+  .triage-card.green:hover { border-color: var(--green); }
+  .triage-card.gold:hover { border-color: var(--gold); }
+  .triage-card.red:hover { border-color: var(--accent); }
+
+  .triage-card .card-icon {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem;
+    margin: 0 auto 1rem;
+  }
+  .triage-card.green .card-icon { background: var(--green-light); }
+  .triage-card.gold .card-icon { background: var(--gold-light); }
+  .triage-card.red .card-icon { background: var(--accent-light); }
+
+  .triage-card h3 {
+    font-family: 'Lora', serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+  }
+  .triage-card.green h3 { color: var(--green); }
+  .triage-card.gold h3 { color: var(--gold); }
+  .triage-card.red h3 { color: var(--accent); }
+
+  .triage-card p { font-size: 0.82rem; color: var(--ink-mid); line-height: 1.5; }
+
+  .triage-card .card-steps {
+    margin-top: 1rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 0.35rem 0.75rem;
+    border-radius: 999px;
+    display: inline-block;
+  }
+  .triage-card.green .card-steps { background: var(--green-light); color: var(--green); }
+  .triage-card.gold .card-steps { background: var(--gold-light); color: var(--gold); }
+  .triage-card.red .card-steps { background: var(--accent-light); color: var(--accent); }
+
+  /* ── STEP SCREEN ── */
+  .screen-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .screen-icon {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+  }
+  .screen-icon.green { background: var(--green-light); }
+  .screen-icon.gold { background: var(--gold-light); }
+  .screen-icon.red { background: var(--accent-light); }
+  .screen-icon.teal { background: var(--teal-light); }
+  .screen-icon.blue { background: var(--blue-light); }
+
+  .screen-header-text h2 {
+    font-family: 'Lora', serif;
+    font-size: 1.45rem;
+    font-weight: 700;
+    line-height: 1.25;
+    margin-bottom: 0.3rem;
+  }
+  .screen-header-text p { font-size: 0.9rem; color: var(--ink-mid); line-height: 1.6; max-width: 560px; }
+
+  /* ── STEP ITEMS ── */
+  .steps-list { display: flex; flex-direction: column; gap: 0; }
+
+  .step-item {
+    display: flex;
+    gap: 0;
+    position: relative;
+  }
+
+  /* connector line */
+  .step-item:not(:last-child)::before {
+    content: '';
+    position: absolute;
+    left: 19px;
+    top: 38px;
+    width: 2px;
+    bottom: 0;
+    background: var(--border);
+    z-index: 0;
+  }
+
+  .step-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-right: 1.1rem;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+  }
+  .step-num {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.85rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    border: 2px solid var(--border);
+    background: var(--warm-white);
+    color: var(--ink-mid);
+    transition: all 0.2s;
+  }
+  .step-item.completed .step-num {
+    background: var(--green);
+    border-color: var(--green);
+    color: white;
+    font-size: 0.9rem;
+  }
+  .step-item.active .step-num.green { background: var(--green); border-color: var(--green); color: white; }
+  .step-item.active .step-num.gold { background: var(--gold); border-color: var(--gold); color: white; }
+  .step-item.active .step-num.red { background: var(--accent); border-color: var(--accent); color: white; }
+  .step-item.active .step-num.teal { background: var(--teal); border-color: var(--teal); color: white; }
+  .step-item.active .step-num.blue { background: var(--blue); border-color: var(--blue); color: white; }
+
+  .step-right {
+    flex: 1;
+    padding-bottom: 1.75rem;
+  }
+
+  .step-card {
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: box-shadow 0.2s;
+  }
+  .step-item.active .step-card { box-shadow: var(--shadow); }
+  .step-item.active .step-card.green { border-color: rgba(42,122,80,0.3); }
+  .step-item.active .step-card.gold { border-color: rgba(160,120,0,0.3); }
+  .step-item.active .step-card.red { border-color: rgba(192,71,30,0.3); }
+  .step-item.active .step-card.teal { border-color: rgba(27,107,95,0.3); }
+  .step-item.active .step-card.blue { border-color: rgba(29,78,138,0.3); }
+
+  .step-item.inactive .step-card { opacity: 0.45; }
+
+  .step-title-row {
+    padding: 0.9rem 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+  .step-title {
+    font-weight: 600;
+    font-size: 0.95rem;
+    flex: 1;
+  }
+  .step-tag {
+    font-size: 0.67rem;
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+  }
+  .step-tag.green { background: var(--green-light); color: var(--green); }
+  .step-tag.gold { background: var(--gold-light); color: var(--gold); }
+  .step-tag.red { background: var(--accent-light); color: var(--accent); }
+  .step-tag.teal { background: var(--teal-light); color: var(--teal); }
+  .step-tag.blue { background: var(--blue-light); color: var(--blue); }
+
+  .step-body {
+    padding: 0 1.2rem 1.2rem;
+    border-top: 1px solid var(--border);
+    padding-top: 1rem;
+    display: none;
+  }
+  .step-item.active .step-body { display: block; }
+  .step-item.completed .step-body { display: none !important; }
+
+  .step-body p {
+    font-size: 0.9rem;
+    color: var(--ink-mid);
+    line-height: 1.65;
+    margin-bottom: 0.75rem;
+  }
+  .step-body p:last-of-type { margin-bottom: 0; }
+
+  .tip-box {
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    font-size: 0.83rem;
+    line-height: 1.55;
+    margin-top: 0.9rem;
+  }
+  .tip-box .tip-label {
+    font-size: 0.67rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 0.3rem;
+  }
+  .tip-box.green { background: var(--green-light); color: #1e5c3c; }
+  .tip-box.gold { background: var(--gold-light); color: #7a5c00; }
+  .tip-box.red { background: var(--accent-light); color: #952e0e; }
+  .tip-box.teal { background: var(--teal-light); color: #13524a; }
+  .tip-box.blue { background: var(--blue-light); color: #163a68; }
+
+  .prompt-list {
+    list-style: none;
+    margin-top: 0.8rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+  .prompt-list li {
+    background: var(--cream);
+    border-radius: 7px;
+    padding: 0.55rem 0.85rem;
+    font-size: 0.84rem;
+    color: var(--ink);
+    line-height: 1.5;
+    border-left: 3px solid var(--border);
+    font-style: italic;
+  }
+
+  /* ── NEXT STEP BUTTON ── */
+  .step-action {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: flex-end;
+  }
+  .btn-next {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0.65rem 1.4rem;
+    border-radius: 999px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .btn-next.green { background: var(--green); color: white; }
+  .btn-next.green:hover { background: #1f5c3c; }
+  .btn-next.gold { background: var(--gold); color: white; }
+  .btn-next.gold:hover { background: #7a5c00; }
+  .btn-next.red { background: var(--accent); color: white; }
+  .btn-next.red:hover { background: #952e0e; }
+  .btn-next.teal { background: var(--teal); color: white; }
+  .btn-next.teal:hover { background: #13524a; }
+  .btn-next.blue { background: var(--blue); color: white; }
+  .btn-next.blue:hover { background: #163a68; }
+  .btn-next .arrow { font-size: 0.75rem; }
+
+  /* ── COMPLETED STEP ── */
+  .step-item.completed .step-title-row {
+    padding: 0.7rem 1.2rem;
+  }
+  .step-item.completed .step-title {
+    font-size: 0.88rem;
+    color: var(--ink-light);
+    text-decoration: line-through;
+    text-decoration-color: var(--border);
+  }
+
+  /* ── TRANSITION CARD ── */
+  .transition-card {
+    margin-top: 0.5rem;
+    background: var(--ink);
+    border-radius: 14px;
+    padding: 1.5rem 1.75rem;
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    color: var(--cream);
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: none;
+    width: 100%;
+    text-align: left;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .transition-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+  .transition-card .tc-icon {
+    width: 46px; height: 46px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+  }
+  .transition-card .tc-text { flex: 1; }
+  .transition-card .tc-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #9a8e84;
+    margin-bottom: 0.2rem;
+  }
+  .transition-card .tc-title {
+    font-family: 'Lora', serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin-bottom: 0.2rem;
+  }
+  .transition-card .tc-desc { font-size: 0.82rem; color: #b0a49a; line-height: 1.5; }
+  .transition-card .tc-arrow {
+    font-size: 1.1rem;
+    color: #9a8e84;
+    flex-shrink: 0;
+  }
+
+  /* ── DONE SCREEN ── */
+  .done-screen {
+    text-align: center;
+    padding: 3rem 1rem;
+  }
+  .done-screen .done-icon {
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    background: var(--green-light);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.8rem;
+    margin: 0 auto 1.5rem;
+  }
+  .done-screen h2 {
+    font-family: 'Lora', serif;
+    font-size: 1.7rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+  }
+  .done-screen p { font-size: 0.95rem; color: var(--ink-mid); line-height: 1.65; max-width: 480px; margin: 0 auto 2rem; }
+
+  .done-actions {
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+  .btn-done {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0.7rem 1.4rem;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-done.primary { background: var(--ink); color: var(--cream); border: none; }
+  .btn-done.primary:hover { background: var(--ink-mid); }
+  .btn-done.secondary { background: transparent; color: var(--ink-mid); border: 2px solid var(--border); }
+  .btn-done.secondary:hover { border-color: var(--ink-mid); color: var(--ink); }
+
+  /* ── RESOURCE / SPACED SCREEN ── */
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .info-card {
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem 1.4rem;
+  }
+  .info-card h4 {
+    font-family: 'Lora', serif;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.65rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .info-card p { font-size: 0.88rem; color: var(--ink-mid); line-height: 1.62; margin-bottom: 0.6rem; }
+  .info-card p:last-child { margin-bottom: 0; }
+
+  .sched-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .sched-table th {
+    background: var(--ink);
+    color: var(--cream);
+    padding: 0.55rem 0.9rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.72rem;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+  }
+  .sched-table td {
+    padding: 0.55rem 0.9rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--ink-mid);
+    line-height: 1.45;
+    font-size: 0.84rem;
+  }
+  .sched-table tr:last-child td { border-bottom: none; }
+  .sched-table tr:nth-child(even) td { background: var(--cream); }
+
+  .res-rows { margin-top: 0.65rem; display: flex; flex-direction: column; gap: 0.5rem; }
+  .res-row {
+    display: flex; align-items: flex-start; gap: 0.6rem;
+    font-size: 0.85rem; color: var(--ink-mid); line-height: 1.5;
+  }
+  .chip {
+    font-size: 0.69rem; font-weight: 600;
+    padding: 0.22rem 0.65rem; border-radius: 999px; flex-shrink: 0;
+    margin-top: 0.1rem;
+  }
+  .chip.red { background: var(--accent-light); color: var(--accent); }
+  .chip.teal { background: var(--teal-light); color: var(--teal); }
+  .chip.blue { background: var(--blue-light); color: var(--blue); }
+  .chip.gold { background: var(--gold-light); color: var(--gold); }
+  .chip.green { background: var(--green-light); color: var(--green); }
+
+  /* ── BOTTOM NAV ── */
+  .bottom-continue {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+  .bottom-continue .skip-link {
+    font-size: 0.82rem;
+    color: var(--ink-light);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  @media (max-width: 600px) {
+    .triage-cards { grid-template-columns: 1fr; }
+    .site-header { padding: 1.2rem; }
+    .container { padding: 1.5rem 1rem 4rem; }
+    .step-left { padding-right: 0.75rem; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div>
+    <h1>Board Question Review</h1>
+    <p>A step-by-step guide for COMLEX / USMLE preparation</p>
+  </div>
+  <button class="back-btn" id="backBtn" onclick="goHome()">← Start over</button>
+</header>
+
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+<div class="breadcrumb" id="breadcrumb">
+  <span>Choose your result to begin</span>
+</div>
+
+<div class="container">
+
+  <!-- ══════════════════════════════════════
+       SCREEN: TRIAGE (Home)
+  ══════════════════════════════════════ -->
+  <div id="screen-triage" class="screen active">
+    <div class="triage-intro">
+      <div class="eyebrow">After each question</div>
+      <h2>How did that question go?</h2>
+      <p>Choose the result that best describes what happened. Each path will walk you through exactly what to review — and how to turn it into lasting knowledge.</p>
+    </div>
+    <div class="triage-cards">
+      <div class="triage-card green" onclick="startFlow('right')">
+        <div class="card-icon">✓</div>
+        <h3>Got It Right</h3>
+        <p>You felt confident and selected the correct answer.</p>
+        <div class="card-steps">2 steps · Quick review</div>
+      </div>
+      <div class="triage-card gold" onclick="startFlow('guessed')">
+        <div class="card-icon">⚡</div>
+        <h3>Flagged / Guessed Right</h3>
+        <p>You got it right, but weren't fully sure — or you guessed.</p>
+        <div class="card-steps">5 steps · Knowledge crack</div>
+      </div>
+      <div class="triage-card red" onclick="startFlow('wrong')">
+        <div class="card-icon">✗</div>
+        <h3>Got It Wrong</h3>
+        <p>You selected the incorrect answer.</p>
+        <div class="card-steps">6 steps · Deep review</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SCREEN: GOT IT RIGHT
+  ══════════════════════════════════════ -->
+  <div id="screen-right" class="screen">
+    <div class="screen-header">
+      <div class="screen-icon green">✓</div>
+      <div class="screen-header-text">
+        <h2>Got It Right — Quick Confidence Check</h2>
+        <p>You don't need to linger here, but a brief intentional review keeps knowledge sharp and builds fluency, not just familiarity.</p>
+      </div>
+    </div>
+    <div class="steps-list" id="steps-right">
+      <div class="step-item active" data-step="0">
+        <div class="step-left"><div class="step-num green">1</div></div>
+        <div class="step-right">
+          <div class="step-card green">
+            <div class="step-title-row">
+              <div class="step-title">Read the educational objective</div>
+              <div class="step-tag green">Read</div>
+            </div>
+            <div class="step-body">
+              <p>Every question has a teaching point. Read it — even briefly — to confirm you understood what was being tested, not just what led you to the right answer.</p>
+              <div class="tip-box green"><span class="tip-label">Why this matters</span>Sometimes you get the right answer for the right reasons; sometimes you get lucky with partial understanding. The objective helps you tell the difference.</div>
+              <div class="step-action"><button class="btn-next green" onclick="nextStep('right', 0)">Mark done <span class="arrow">→</span></button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-item inactive" data-step="1">
+        <div class="step-left"><div class="step-num green">2</div></div>
+        <div class="step-right">
+          <div class="step-card green">
+            <div class="step-title-row">
+              <div class="step-title">Confirm your reasoning — then move on</div>
+              <div class="step-tag green">Reflect</div>
+            </div>
+            <div class="step-body">
+              <p>Ask yourself: <em>Did I get this right for the right reasons?</em> If yes — trust yourself. If something felt uncertain even as you got it right, note it mentally for a light review next session.</p>
+              <p>There's no need to dwell. Your time is better spent on genuine gaps. Move to the next question.</p>
+              <div class="step-action"><button class="btn-next green" onclick="finishFlow('right')">Done — next question <span class="arrow">→</span></button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SCREEN: GUESSED RIGHT
+  ══════════════════════════════════════ -->
+  <div id="screen-guessed" class="screen">
+    <div class="screen-header">
+      <div class="screen-icon gold">⚡</div>
+      <div class="screen-header-text">
+        <h2>Flagged / Guessed Right — Find the Knowledge Crack</h2>
+        <p>You got credit, but you weren't fully sure. There's a learning opportunity hiding in this "correct" answer — don't let it slip by.</p>
+      </div>
+    </div>
+    <div class="steps-list" id="steps-guessed">
+      <div class="step-item active" data-step="0">
+        <div class="step-left"><div class="step-num gold">1</div></div>
+        <div class="step-right">
+          <div class="step-card gold">
+            <div class="step-title-row">
+              <div class="step-title">Read the correct answer and its full explanation</div>
+              <div class="step-tag gold">Read</div>
+            </div>
+            <div class="step-body">
+              <p>Read the explanation carefully — even though you got it right. You're looking for the specific detail or reasoning that would have made you <em>confident</em>, not just correct.</p>
+              <div class="step-action"><button class="btn-next gold" onclick="nextStep('guessed', 0)">Got it <span class="arrow">→</span></button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-item inactive" data-step="1">
+        <div class="step-left"><div class="step-num gold">2</div></div>
+        <div class="step-right">
+          <div class="step-card gold">
+            <div class="step-title-row">
+              <div class="step-title">Identify the knowledge crack</div>
+              <div class="step-tag gold">Diagnose</div>
+            </div>
+            <div class="step-body">
+              <p>Ask yourself: <em>What specific detail or connection was I missing that kept me from feeling certain?</em></p>
+              <div class="tip-box gold"><span class="tip-label">Knowledge Crack vs. Knowledge Gap</span>A <strong>crack</strong> means you know the topic but are fuzzy on a detail. A <strong>gap</strong> means the concept is largely unfamiliar. Cracks need reinforcement; gaps need rebuilding.</div>
+              <div class="step-action"><button class="btn-next gold" onclick="nextStep('guessed', 1)">Identified it <span class="arrow">→</span></button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-item inactive" data-step="2">
+        <div class="step-left"><div class="step-num gold">3</div></div>
+        <div class="step-right">
+          <div class="step-card gold">
+            <div class="step-title-row">
+              <div class="step-title">Record the missing detail</div>
+              <div class="step-tag gold">Record</div>
+            </div>
+            <div class="step-body">
+              <p>Write the specific detail in First Aid, a notebook, or a flashcard. Be targeted — not "review murmurs" but the exact distinguishing fact that tripped you up.</p>
+              <div class="tip-box gold"><span class="tip-label">Example</span>"Mitral regurgitation → holosystolic murmur radiating to axilla, louder with handgrip."</div>
+              <div class="step-action"><button class="btn-next gold" onclick="nextStep('guessed', 2)">Recorded <span class="arrow">→</span></button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-item inactive" data-step="3">
+        <div class="step-left"><div class="step-num gold">4</div></div>
+        <div class="step-right">
+          <div class="step-card gold">
+            <div class="step-title-row">
+              <div class="step-title">Summarize in your own words</div>
+              <div class="step-tag gold">Recall</div>
+            </div>
+            <div class="step-body">
+              <p>In 1–2 sentences, explain why the right answer is right — in your own words. This is active recall: your brain remembers what it has to <em>generate</em>, not what it passively reads.</p>
+              <ul class="prompt-list">
+                <li>The correct answer is ___ because ___.</li>
+                <li>The key feature that distinguishes this is ___.</li>
+              </ul>
+              <div class="step-action"><button class="btn-next gold" onclick="nextStep('guessed', 3)">Done <span class="arrow">→</span></button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Transition to error analysis -->
+      <div class="step-item inactive" data-step="4">
+        <div class="step-left"><div class="step-num" style="border-style:dashed;">→</div></div>
+        <div class="step-right">
+          <button class="transition-card" onclick="goToScreen('screen-error', 'guessed')">
+            <div class="tc-icon">🔍</div>
+            <div class="tc-text">
+              <div class="tc-label">Optional but recommended</div>
+              <div class="tc-title">Classify this as an error type</div>
+              <div class="tc-desc">Even for guessed-right answers, understanding <em>why</em> you were uncertain helps you fix the right thing.</div>
+            </div>
+            <div class="tc-arrow">→</div>
+          </button>
+          <div style="margin-top:0.75rem; text-align:right;">
+            <button class="skip-link" onclick="finishFlow('guessed')" style="font-size:0.8rem;color:var(--ink-light);background:none;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;text-decoration:underline;text-underline-offset:3px;">Skip — mark complete</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SCREEN: GOT IT WRONG
+  ══════════════════════════════════════ -->
+  <div id="screen-wrong" class="screen">
+    <div class="screen-header">
+      <div class="screen-icon red">✗</div>
+      <div class="screen-header-text">
+        <h2>Got It Wrong — Deep Review</h2>
+        <p>This is where the real learning happens. Getting a question wrong is a gift — it's showing you exactly where to focus. The goal isn't to feel bad; it's to get curious and then get busy.</p>
+      </div>
+    </div>
+    <div class="steps-list" id="steps-wrong">
+      <div class="step-item active" data-step="0">
+        <div class="step-left"><div class="step-num red">1</div></div>
+        <div class="step-right">
+          <div class="step-card red">
+            <div class="step-title-row">
+              <div class="step-title">Before reading — reconstruct your reasoning</div>
+              <div class="step-tag red">Before you read</div>
+            </div>
+            <div class="step-body">
+              <p>Before you look at the explanation, write out or think through: <em>Why did I pick what I picked?</em></p>
+              <ul class="prompt-list">
+                <li>I chose ___ because I was thinking ___.</li>
+                <li>The part of the stem that threw me off was ___.</li>
+              </ul>
+              <div class="tip-box red"><span class="tip-label">Why before reading?</span>If you read the explanation first, your brain will retroactively fit your memory of your reasoning to the correct answer — making it harder to identify what actually went wrong.</div>
+              <div class="step-action"><button class="btn-next red" onclick="nextStep('wrong', 0)">Reconstructed it <span class="arrow">→</span></button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-item inactive" data-step="1">
+        <div class="step-left"><div class="step-num red">2</div></div>
+        <div class="step-right">
+          <div class="step-card red">
+            <div class="step-title-row">
+              <div class="step-title">Revisit the stem carefully</div>
+              <div class="step-tag red">Re-read</div>
+            </div>
+            <div class="step-body">
+              <p>Read the question stem again. Did you miss a qualifier, misread the task, or overlook a key detail? Check specifically: patient age/sex/setting, time course language (acute vs. chronic), and what the question is actually asking (diagnosis? next step? mechanism?).</p>
+              <div class="step-action"><button class="btn-next red" onclick="nextStep('wrong', 1)">Reviewed stem <span class="arrow">→</span></button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-item inactive" data-step="2">
+        <div class="step-left"><div class="step-num red">3</div></div>
+        <div class="step-right">
+          <div class="step-card red">
+            <div class="step-title-row">
+              <div class="step-title">Engage with content (for knowledge gaps)</div>
+              <div class="step-tag red">Study</div>
+            </div>
+            <div class="step-body">
+              <p>If this is a knowledge gap, look it up in a primary resource — don't just re-read the question explanation. You want to understand the surrounding framework, not just the isolated fact. Understanding how the piece fits the bigger picture is what makes knowledge sticky.</p>
+              <div class="tip-box red"><span class="tip-label">Not a knowledge gap?</span>If you already understood the content, skip the resource dive — head to error analysis first to figure out what kind of error this actually was.</div>
+              <div class="step-action"><button class="btn-next red" onclick="nextStep('wrong', 2)">Reviewed content <span class="arrow">→</span></button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-item inactive" data-step="3">
+        <div class="step-left"><div class="step-num red">4</div></div>
+        <div class="step-right">
+          <div class="step-card red">
+            <div class="step-title-row">
+              <div class="step-title">Write your 1–2 sentence summary</div>
+              <div class="step-tag red">Recall</div>
+            </div>
+            <div class="step-body">
+              <p>In your own words, write it out. This is the most important step for retention — your brain remembers what it has to generate, not what it passively reads.</p>
+              <ul class="prompt-list">
+                <li>I incorrectly chose ___ because ___. This was wrong because ___.</li>
+                <li>The correct answer is ___ because ___. The key distinguishing feature was ___.</li>
+              </ul>
+              <div class="step-action"><button class="btn-next red" onclick="nextStep('wrong', 3)">Written <span class="arrow">→</span></button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-item inactive" data-step="4">
+        <div class="step-left"><div class="step-num red">5</div></div>
+        <div class="step-right">
+          <div class="step-card red">
+            <div class="step-title-row">
+              <div class="step-title">Record for spaced review</div>
+              <div class="step-tag red">Record</div>
+            </div>
+            <div class="step-body">
+              <p>Add this to your active review materials — a flashcard, First Aid annotation, or mistake log. Getting it wrong once is learning; forgetting it and getting it wrong again is wasted effort.</p>
+              <div class="tip-box red"><span class="tip-label">What to record</span>The concept, the key distinguishing feature, and ideally a brief clinical pearl that will trigger the right thinking next time.</div>
+              <div class="step-action"><button class="btn-next red" onclick="nextStep('wrong', 4)">Recorded <span class="arrow">→</span></button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Transition to error analysis -->
+      <div class="step-item inactive" data-step="5">
+        <div class="step-left"><div class="step-num" style="border-style:dashed;">→</div></div>
+        <div class="step-right">
+          <button class="transition-card" onclick="goToScreen('screen-error', 'wrong')">
+            <div class="tc-icon">🔍</div>
+            <div class="tc-text">
+              <div class="tc-label">Next: understand the error type</div>
+              <div class="tc-title">Classify this error</div>
+              <div class="tc-desc">Was this a knowledge gap, a reasoning error, or a test-taking issue? Knowing this makes your next study session far more targeted.</div>
+            </div>
+            <div class="tc-arrow">→</div>
+          </button>
+          <div style="margin-top:0.75rem; text-align:right;">
+            <button class="skip-link" onclick="finishFlow('wrong')" style="font-size:0.8rem;color:var(--ink-light);background:none;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;text-decoration:underline;text-underline-offset:3px;">Skip — mark complete</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SCREEN: ERROR ANALYSIS
+  ══════════════════════════════════════ -->
+  <div id="screen-error" class="screen">
+    <div class="screen-header">
+      <div class="screen-icon teal">🔍</div>
+      <div class="screen-header-text">
+        <h2>Error Analysis — Why Did I Miss This?</h2>
+        <p>Before you can fix an error, you need to understand what kind of error it is. Each type calls for a different response — matching your remedy to your error type is what makes review efficient.</p>
+      </div>
+    </div>
+
+    <div class="steps-list" id="steps-error">
+      <div class="step-item active" data-step="0">
+        <div class="step-left"><div class="step-num teal">1</div></div>
+        <div class="step-right">
+          <div class="step-card teal">
+            <div class="step-title-row">
+              <div class="step-title">Identify your error type</div>
+              <div class="step-tag teal">Diagnose</div>
+            </div>
+            <div class="step-body">
+              <p>Read each category below. Which one best describes what happened on this question?</p>
+              <div class="tip-box red" style="margin-bottom:0.65rem;">
+                <span class="tip-label">🧠 Knowledge Gap</span>
+                "I didn't know this" / "I've never seen this topic." <strong>Fix:</strong> Go to a primary resource, understand the framework, create a flashcard. Ask how this fits what you know about the system.
+              </div>
+              <div class="tip-box blue" style="margin-bottom:0.65rem;">
+                <span class="tip-label">💡 Reasoning Error</span>
+                "I knew it but applied it wrong" / "I second-guessed myself" / "I confused this with something else." <strong>Fix:</strong> Trace your logic — where did it derail? A comparison note (e.g., Crohn's vs. UC differences) is often more valuable than reviewing either topic alone.
+              </div>
+              <div class="tip-box teal">
+                <span class="tip-label">🎯 Test-Taking Issue</span>
+                "I misread NOT/EXCEPT" / "I changed my correct answer" / "Time pressure." <strong>Fix:</strong> This is a strategy issue. Circle negatives in every question. Commit to first instinct unless you find a specific reason to change. Build pacing stamina with timed blocks.
+              </div>
+              <div class="step-action"><button class="btn-next teal" onclick="nextStep('error', 0)">I've classified it <span class="arrow">→</span></button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-item inactive" data-step="1">
+        <div class="step-left"><div class="step-num teal">2</div></div>
+        <div class="step-right">
+          <div class="step-card teal">
+            <div class="step-title-row">
+              <div class="step-title">Record the error type with your notes</div>
+              <div class="step-tag teal">Record</div>
+            </div>
+            <div class="step-body">
+              <p>When you record this question in your mistake log or flashcard, note the error type alongside the concept. Over time, patterns will emerge — if you see many "reasoning errors," that's a signal to practice more question analysis, not more reading.</p>
+              <ul class="prompt-list">
+                <li>Topic: ___ | Error type: [Gap / Reasoning / Test-taking] | Key pearl: ___</li>
+                <li>I confused ___ with ___. The difference is ___.</li>
+              </ul>
+              <div class="step-action"><button class="btn-next teal" onclick="nextStep('error', 1)">Noted <span class="arrow">→</span></button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Transition to spaced review / resources -->
+      <div class="step-item inactive" data-step="2">
+        <div class="step-left"><div class="step-num" style="border-style:dashed;">→</div></div>
+        <div class="step-right">
+          <div style="display:flex;flex-direction:column;gap:0.75rem;">
+            <button class="transition-card" onclick="goToScreen('screen-spaced', 'error')">
+              <div class="tc-icon">🔁</div>
+              <div class="tc-text">
+                <div class="tc-label">Next: seal in long-term memory</div>
+                <div class="tc-title">Set up spaced review</div>
+                <div class="tc-desc">One review isn't enough. Learn when and how to revisit this so it sticks for exam day.</div>
+              </div>
+              <div class="tc-arrow">→</div>
+            </button>
+            <button class="transition-card" style="background:#2e2824;" onclick="goToScreen('screen-resources', 'error')">
+              <div class="tc-icon">📚</div>
+              <div class="tc-text">
+                <div class="tc-label">Or: connect to your resources</div>
+                <div class="tc-title">Use your study resources effectively</div>
+                <div class="tc-desc">Know which resource to reach for and how to integrate this missed concept.</div>
+              </div>
+              <div class="tc-arrow">→</div>
+            </button>
+          </div>
+          <div style="margin-top:0.75rem; text-align:right;">
+            <button class="skip-link" onclick="finishFlow('error')" style="font-size:0.8rem;color:var(--ink-light);background:none;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;text-decoration:underline;text-underline-offset:3px;">I'm done with this question</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SCREEN: SPACED REVIEW
+  ══════════════════════════════════════ -->
+  <div id="screen-spaced" class="screen">
+    <div class="screen-header">
+      <div class="screen-icon blue">🔁</div>
+      <div class="screen-header-text">
+        <h2>Spaced Review — Turning Today's Work into Long-Term Memory</h2>
+        <p>Reviewing a missed concept once is good. Reviewing it at the right intervals is what actually moves it into long-term memory.</p>
+      </div>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-card">
+        <h4>📐 Why spacing works</h4>
+        <p>The <strong>spacing effect</strong> shows that information reviewed at increasing intervals is retained far better than information reviewed all at once. Reviewing a concept when you're <em>just about to forget it</em> is when memory consolidation is strongest.</p>
+        <p>Doing 100 questions and reviewing them all once is far less effective than reviewing wrong answers again tomorrow, in 3 days, then in a week.</p>
+      </div>
+
+      <div class="info-card">
+        <h4>📅 Your review schedule</h4>
+        <table class="sched-table">
+          <tr><th>When</th><th>What to do</th></tr>
+          <tr><td><strong>Same day</strong></td><td>Full review: classify error, summarize, record in notes or Anki</td></tr>
+          <tr><td><strong>Next day</strong></td><td>Recall your summary without looking — if you can't, revisit</td></tr>
+          <tr><td><strong>3–5 days</strong></td><td>Quiz yourself from scratch before checking your notes</td></tr>
+          <tr><td><strong>1–2 weeks</strong></td><td>Anki surfaces cards automatically; or scan mistake log</td></tr>
+          <tr><td><strong>Pre-exam</strong></td><td>Final pass through all flagged/uncertain items</td></tr>
+        </table>
+      </div>
+
+      <div class="info-card">
+        <h4>📓 Keep a mistake log</h4>
+        <p>A mistake log is a running document where you record missed concepts along with your 1–2 sentence summary. It doesn't need to be an app — a Google Doc, notebook, or First Aid annotations all work.</p>
+        <p><strong>Key habit:</strong> Spend 5–10 minutes at the start of each study session reading recent entries from your mistake log <em>before</em> opening new questions. Low effort, high return.</p>
+      </div>
+    </div>
+
+    <div class="bottom-continue">
+      <button class="skip-link" onclick="finishFlow('spaced')">I'm done with this question</button>
+      <button class="btn-next blue" onclick="goToScreen('screen-resources', 'spaced')">See resource tips <span class="arrow">→</span></button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SCREEN: USING RESOURCES
+  ══════════════════════════════════════ -->
+  <div id="screen-resources" class="screen">
+    <div class="screen-header">
+      <div class="screen-icon blue">📚</div>
+      <div class="screen-header-text">
+        <h2>Using Study Resources Effectively</h2>
+        <p>Practice questions are most powerful when they're connected to your larger study system. Here's how to integrate missed concepts without falling into rabbit holes.</p>
+      </div>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-card">
+        <h4>🎯 Match your resource to your error type</h4>
+        <div class="res-rows">
+          <div class="res-row"><div class="chip red">First Aid</div>Annotate for knowledge gaps — mark items from questions with ★ or Q in the margins</div>
+          <div class="res-row"><div class="chip teal">Sketchy</div>Use when recall is failing for lists (drugs, organisms, mechanisms) — visual encoding sticks</div>
+          <div class="res-row"><div class="chip blue">Pathoma</div>Use when pathophysiology <em>framework</em> is unclear, not just for isolated facts</div>
+          <div class="res-row"><div class="chip gold">Anki</div>Make cards from your own 1–2 sentence summaries — self-made cards are stickier than pre-made</div>
+          <div class="res-row"><div class="chip green">OMT Review</div>Connect to clinical reasoning, not just memorized technique lists</div>
+        </div>
+      </div>
+
+      <div class="info-card">
+        <h4>💡 Let questions drive your resource use</h4>
+        <p>Many students read resources first, then do questions to "test" themselves. Research on retrieval practice suggests the opposite works better: do questions first, then use your errors to guide exactly what you look up.</p>
+        <p>Struggling on a question creates a state of <em>desirable difficulty</em> that primes your brain to encode the correct information more deeply when you find it.</p>
+      </div>
+
+      <div class="info-card">
+        <h4>⏱ Limit the deep dive</h4>
+        <p>During question review, spend no more than <strong>2–3 minutes per resource lookup</strong>. Note what needs deeper study and return to it in a dedicated block — don't let one question derail your whole session.</p>
+        <div class="tip-box blue" style="margin-top:0.65rem;"><span class="tip-label">The goal</span>Identify gaps and close them. Not re-read entire chapters. Protect your review momentum.</div>
+      </div>
+    </div>
+
+    <div class="bottom-continue">
+      <button class="skip-link" onclick="goHome()">← Start over</button>
+      <button class="btn-next blue" onclick="finishFlow('resources')">Done with this question <span class="arrow">→</span></button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SCREEN: DONE
+  ══════════════════════════════════════ -->
+  <div id="screen-done" class="screen">
+    <div class="done-screen">
+      <div class="done-icon">🎯</div>
+      <h2>Question reviewed.</h2>
+      <p>You've done the work that most students skip. Every question you review this carefully is a concept that's more likely to stick on exam day.</p>
+      <div class="done-actions">
+        <button class="btn-done primary" onclick="goHome()">Review another question</button>
+        <button class="btn-done secondary" onclick="goToScreen('screen-spaced', 'done')">Review spaced repetition guide</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end container -->
+
+<script>
+  // State
+  let currentFlow = null;
+  let fromScreen = null;
+
+  const stepCounts = { right: 2, guessed: 5, wrong: 6, error: 3 };
+
+  const breadcrumbLabels = {
+    'screen-triage': null,
+    'screen-right': 'Got It Right',
+    'screen-guessed': 'Flagged / Guessed',
+    'screen-wrong': 'Got It Wrong',
+    'screen-error': 'Error Analysis',
+    'screen-spaced': 'Spaced Review',
+    'screen-resources': 'Using Resources',
+    'screen-done': 'Complete'
+  };
+
+  const progressMap = {
+    'screen-triage': 0,
+    'screen-right': 30,
+    'screen-guessed': 30,
+    'screen-wrong': 30,
+    'screen-error': 65,
+    'screen-spaced': 80,
+    'screen-resources': 90,
+    'screen-done': 100
+  };
+
+  function setProgress(screenId) {
+    document.getElementById('progressFill').style.width = (progressMap[screenId] || 0) + '%';
+  }
+
+  function updateBreadcrumb(screenId) {
+    const bc = document.getElementById('breadcrumb');
+    const label = breadcrumbLabels[screenId];
+    if (!label) {
+      bc.innerHTML = '<span>Choose your result to begin</span>';
+    } else {
+      const from = fromScreen ? breadcrumbLabels[fromScreen] : null;
+      let html = '<span class="crumb">Start</span>';
+      if (from && from !== label) html += `<span class="sep">›</span><span class="crumb">${from}</span>`;
+      html += `<span class="sep">›</span><span class="crumb">${label}</span>`;
+      bc.innerHTML = html;
+    }
+  }
+
+  function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    setProgress(id);
+    updateBreadcrumb(id);
+    const backBtn = document.getElementById('backBtn');
+    backBtn.classList.toggle('visible', id !== 'screen-triage');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function startFlow(type) {
+    currentFlow = type;
+    fromScreen = null;
+    const screenMap = { right: 'screen-right', guessed: 'screen-guessed', wrong: 'screen-wrong' };
+    showScreen(screenMap[type]);
+    resetSteps(type);
+  }
+
+  function resetSteps(flow) {
+    const container = document.getElementById('steps-' + flow);
+    if (!container) return;
+    const items = container.querySelectorAll('.step-item');
+    items.forEach((item, i) => {
+      item.classList.remove('active', 'completed', 'inactive');
+      item.classList.add(i === 0 ? 'active' : 'inactive');
+    });
+  }
+
+  function nextStep(flow, currentIndex) {
+    const container = document.getElementById('steps-' + flow);
+    const items = container.querySelectorAll('.step-item');
+    // Mark current as completed
+    items[currentIndex].classList.remove('active');
+    items[currentIndex].classList.add('completed');
+    items[currentIndex].querySelector('.step-num').textContent = '✓';
+    // Activate next
+    if (currentIndex + 1 < items.length) {
+      items[currentIndex + 1].classList.remove('inactive');
+      items[currentIndex + 1].classList.add('active');
+      // Scroll to next step
+      setTimeout(() => {
+        items[currentIndex + 1].scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    }
+  }
+
+  function goToScreen(screenId, from) {
+    fromScreen = from ? breadcrumbLabels['screen-' + from] || from : null;
+    // Reset the target screen's steps
+    const flowMap = { 'screen-error': 'error', 'screen-spaced': null, 'screen-resources': null };
+    if (flowMap[screenId] === 'error') resetSteps('error');
+    showScreen(screenId);
+  }
+
+  function finishFlow(flow) {
+    showScreen('screen-done');
+  }
+
+  function goHome() {
+    currentFlow = null;
+    fromScreen = null;
+    showScreen('screen-triage');
+    // Reset all step flows
+    ['right', 'guessed', 'wrong', 'error'].forEach(resetSteps);
+  }
+</script>
+</body>
+</html>
